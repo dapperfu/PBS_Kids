@@ -16,12 +16,20 @@ Download a list of available videos and caches them to ```videos.json```.
 
 Currently only grabs full Episodes. 
 
+## pbs_stage3.py
+
+Currently does too much.
+
+- Writes Kodi NFO File when it is run.
+- Prints a shell script to download episodes and episode images using curl.
+
+    ./pbs_stage3.py > runme.sh
+    sh runme.sh
 
 
 If you find these scripts useful please consider a donation to PBS: http://www.pbs.org/donate/
 
-
 #### Notes:
 
 1. This was quickly thrown together and not completely documented.
-2. It could use some code refactoring but it's not worth it.
+2. It could use some code refactoring but it's not worth it because this works.

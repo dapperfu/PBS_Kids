@@ -1,10 +1,8 @@
-#!/bin/env python3
+#!/usr/bin/env python3
 from __future__ import print_function
 import requests
 import os.path
 import json
-
-print("#!/bin/sh")
 
 # Make changes here.
 DOWNLOAD_ROOT = "/mnt/box/KidsTV"
@@ -91,8 +89,8 @@ def get_mp4_video(videos):
     best_video(videos)
     """
     for mp4_quality in MP4_ORDER:
-        if mp4_quality in videos["mp4"]:
-            return get_redirect_url(videos["mp4"][mp4_quality]["url"])
+        if mp4_quality in videos["flash"]:
+            return get_redirect_url(videos["flash"][mp4_quality]["url"])
     return None
 
 # Get the best hls video available.
@@ -106,7 +104,7 @@ def get_hls_video(videos):
     return None
 
 def get_output_base(video):
-    title =  video["series_title"]
+    title =  video["series_title"].strip()
     ep_title =  video["title"].replace("/", " and ")
     base = "{}.{}.{}".format(title, video["nola_episode"], ep_title)
     vid_file = os.path.join(DOWNLOAD_ROOT, title, base)
@@ -153,15 +151,14 @@ def get_nfo(video):
     video["aired"] = video["airdate"].split(" ")[0]
 
     nfo = """<episodedetails>
-            <title>{title}</title>
-            <season>{season}</season>
-            <episode>{episode}</episode>
-            <plot>{description}</plot>
-            <aired>{aired}</aired>
-            <premiered>{aired}</premiered>
-            <studio>PBS Kids</studio>
-    </episodedetails>
-    """.format(**video)
+    <title>{title}</title>
+    <season>{season}</season>
+    <episode>{episode}</episode>
+    <plot>{description}</plot>
+    <aired>{aired}</aired>
+    <premiered>{aired}</premiered>
+    <studio>PBS Kids</studio>
+</episodedetails>""".format(**video)
     
     return nfo
 
@@ -182,7 +179,8 @@ def write_nfo(video):
         with open(nfo_file, "w") as nfo:
             print(get_nfo(video), file=nfo)
             print("# Wrote NFO: {}".format(nfo_file))
-        
+
+# Print the command to download the image.
 def download_image(video):
     img_file_base = get_output_base(video)
     img_file = img_file_base+".jpg"
@@ -194,14 +192,10 @@ def download_image(video):
         print("# "+cmd)
 
 
-with open(SHOWS_CACHE, 'r') as infile:
-    shows =json.load(infile)
-print("# Number of shows: {}".format(len(shows["items"])))
-
+print("#!/bin/sh")
 with open(VIDEOS_CACHE, 'r') as infile:
     videos = json.loads(infile.read())
 print("# Number of available videos: {}".format(len(videos)))
-
 
 for video in videos:
     title = video["series_title"]
